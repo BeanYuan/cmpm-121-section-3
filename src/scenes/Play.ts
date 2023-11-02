@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 
 import starfieldUrl from "/assets/starfield.png";
+import shipUrl from "/assets/ship.png";
 import enemyUrl from "/assets/enemy.png";
 
 export default class Play extends Phaser.Scene {
@@ -9,7 +10,7 @@ export default class Play extends Phaser.Scene {
   right?: Phaser.Input.Keyboard.Key;
 
   starfield?: Phaser.GameObjects.TileSprite;
-  spinner?: Phaser.GameObjects.Shape;
+  spinner?: Phaser.Physics.Arcade.Image;
   enemyGroup?: Phaser.Physics.Arcade.Group;
 
   rotationSpeed = Phaser.Math.PI2 / 1000; // radians per millisecond
@@ -21,6 +22,7 @@ export default class Play extends Phaser.Scene {
   preload() {
     this.load.image("starfield", starfieldUrl);
     this.load.image("enemy", enemyUrl);
+    this.load.image("ship", shipUrl);
   }
 
   #addKey(
@@ -44,7 +46,8 @@ export default class Play extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
-    this.spinner = this.add.rectangle(300, 400, 50, 50, 0xd18c57);
+    this.spinner = this.physics.add.image(300, 400, "ship");
+    this.spinner.setDisplaySize(50, 50).setTint(0xd18c57);
 
     this.enemyGroup = this.physics.add.group();
 
@@ -76,10 +79,10 @@ export default class Play extends Phaser.Scene {
 
     if (!this.fire!.isDown) {
       if (this.left!.isDown) {
-        this.spinner!.x -= delta * 1;
+        this.spinner!.setVelocityX(delta * -10);
       }
       if (this.right!.isDown) {
-        this.spinner!.x += delta * 1;
+        this.spinner!.setVelocityX(delta * 10);
       }
     }
 
